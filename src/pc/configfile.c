@@ -9,6 +9,7 @@
 #include "platform.h"
 #include "configfile.h"
 #include "cliopts.h"
+#include "cheats.h"
 #include "gfx/gfx_screen_config.h"
 #include "gfx/gfx_window_manager_api.h"
 #include "controller/controller_api.h"
@@ -141,6 +142,15 @@ static const struct ConfigOption options[] = {
     #ifdef DISCORDRPC
     {.name = "discordrpc_enable",    .type = CONFIG_TYPE_BOOL, .boolValue = &configDiscordRPC},
     #endif 
+    {.name = "cheats_enable",         .type = CONFIG_TYPE_BOOL, .boolValue = &Cheats.EnableCheats},
+    {.name = "cheats_moonjump",       .type = CONFIG_TYPE_BOOL, .boolValue = &Cheats.MoonJump},
+    {.name = "cheats_godmode",        .type = CONFIG_TYPE_BOOL, .boolValue = &Cheats.GodMode},
+    {.name = "cheats_infinite_lives", .type = CONFIG_TYPE_BOOL, .boolValue = &Cheats.InfiniteLives},
+    {.name = "cheats_super_speed",    .type = CONFIG_TYPE_BOOL, .boolValue = &Cheats.SuperSpeed},
+    {.name = "cheats_responsive",     .type = CONFIG_TYPE_BOOL, .boolValue = &Cheats.Responsive},
+    {.name = "cheats_exit_anywhere",  .type = CONFIG_TYPE_BOOL, .boolValue = &Cheats.ExitAnywhere},
+    {.name = "cheats_huge_mario",     .type = CONFIG_TYPE_BOOL, .boolValue = &Cheats.HugeMario},
+    {.name = "cheats_tiny_mario",     .type = CONFIG_TYPE_BOOL, .boolValue = &Cheats.TinyMario},
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string
