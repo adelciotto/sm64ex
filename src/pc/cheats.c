@@ -11,4 +11,5 @@ struct CheatList Cheats = {
     .HugeMario = false,
     .TinyMario = false,
     .InfiniteFallHeight = false,
+    .SpecialTripleJump = false,
 };

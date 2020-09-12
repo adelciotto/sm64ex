@@ -152,6 +152,7 @@ static const struct ConfigOption options[] = {
     {.name = "cheats_huge_mario",           .type = CONFIG_TYPE_BOOL, .boolValue = &Cheats.HugeMario},
     {.name = "cheats_tiny_mario",           .type = CONFIG_TYPE_BOOL, .boolValue = &Cheats.TinyMario},
     {.name = "cheats_infinite_fall_height", .type = CONFIG_TYPE_BOOL, .boolValue = &Cheats.InfiniteFallHeight},
+    {.name = "cheats_special_triple_jump",  .type = CONFIG_TYPE_BOOL, .boolValue = &Cheats.SpecialTripleJump},
 };
 
 // Reads an entire line from a file (excluding the newline character) and returns an allocated string

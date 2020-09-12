@@ -8,12 +8,13 @@ struct CheatList {
     bool         MoonJump;
     bool         GodMode;
     bool         InfiniteLives;
-    bool         InfiniteFallHeight;
     bool         SuperSpeed;
     bool         Responsive;
     bool         ExitAnywhere;
     bool         HugeMario;
     bool         TinyMario;
+    bool         InfiniteFallHeight;
+    bool         SpecialTripleJump;
 };
 
 extern struct CheatList Cheats;

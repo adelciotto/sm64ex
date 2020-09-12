@@ -85,6 +85,7 @@
 #define TEXT_OPT_CHEAT8    _("HUGE MARIO")
 #define TEXT_OPT_CHEAT9    _("TINY MARIO")
 #define TEXT_OPT_CHEAT10   _("INFINITE FALL HEIGHT")
+#define TEXT_OPT_CHEAT11   _("SPECIAL TRIPLE JUMP")
 
 #else // VERSION
 
@@ -150,6 +151,7 @@
 #define TEXT_OPT_CHEAT8    _("Huge Mario")
 #define TEXT_OPT_CHEAT9    _("Tiny Mario")
 #define TEXT_OPT_CHEAT10   _("Infinite fall height")
+#define TEXT_OPT_CHEAT11   _("Special triple jump")
 
 #endif // VERSION
 
