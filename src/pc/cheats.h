@@ -8,6 +8,7 @@ struct CheatList {
     bool         MoonJump;
     bool         GodMode;
     bool         InfiniteLives;
+    bool         InfiniteFallHeight;
     bool         SuperSpeed;
     bool         Responsive;
     bool         ExitAnywhere;

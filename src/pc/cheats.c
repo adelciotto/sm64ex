@@ -10,4 +10,5 @@ struct CheatList Cheats = {
     .ExitAnywhere = false,
     .HugeMario = false,
     .TinyMario = false,
+    .InfiniteFallHeight = false,
 };

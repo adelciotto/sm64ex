@@ -17,6 +17,7 @@
 #ifdef BETTERCAMERA
 #include "bettercamera.h"
 #endif
+#include "pc/cheats.h"
 
 void play_flip_sounds(struct MarioState *m, s16 frame1, s16 frame2, s16 frame3) {
     s32 animFrame = m->marioObj->header.gfx.unk38.animFrame;
@@ -26,6 +27,10 @@ void play_flip_sounds(struct MarioState *m, s16 frame1, s16 frame2, s16 frame3) 
 }
 
 void play_far_fall_sound(struct MarioState *m) {
+    if (Cheats.EnableCheats == true && Cheats.InfiniteFallHeight == true) {
+        return;
+    }
+
     u32 action = m->action;
     if (!(action & ACT_FLAG_INVULNERABLE) && action != ACT_TWIRLING && action != ACT_FLYING
         && !(m->flags & MARIO_UNKNOWN_18)) {
@@ -63,6 +68,10 @@ s32 lava_boost_on_wall(struct MarioState *m) {
 }
 
 s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
+    if (Cheats.EnableCheats == true && Cheats.InfiniteFallHeight == true) {
+        return FALSE;
+    }
+
     f32 fallHeight;
     f32 damageHeight;
 
