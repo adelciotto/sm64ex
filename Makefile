@@ -48,6 +48,8 @@ TEXTSAVES ?= 0
 EXTERNAL_DATA ?= 0
 # Enable Discord Rich Presence
 DISCORDRPC ?= 0
+# Disable new spinning triple jump
+SPINNING_TRIPLE_JUMP ?= 0
 
 # Various workarounds for weird toolchains
 
@@ -588,6 +590,12 @@ endif
 ifeq ($(EXT_OPTIONS_MENU),1)
   CC_CHECK += -DEXT_OPTIONS_MENU
   CFLAGS += -DEXT_OPTIONS_MENU
+endif
+
+# Check for new spinning triple jump option
+ifeq ($(SPINNING_TRIPLE_JUMP),1)
+  CC_CHECK += -DSPINNING_TRIPLE_JUMP
+  CFLAGS += -DSPINNING_TRIPLE_JUMP
 endif
 
 # Check for no bzero/bcopy workaround option

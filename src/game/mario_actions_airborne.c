@@ -480,6 +480,95 @@ s32 act_double_jump(struct MarioState *m) {
     return FALSE;
 }
 
+void play_spinning_triple_jump_sounds(struct MarioState *m) {
+    if (m->marioObj->header.gfx.unk38.animID == MARIO_ANIM_FORWARD_SPINNING && m->marioObj->header.gfx.unk38.animFrame == 0) {
+        play_sound(SOUND_ACTION_SPIN, m->marioObj->header.gfx.cameraToObject);
+    }
+}
+
+u32 spinning_triple_jump_air_action_step(struct MarioState *m) {
+    u32 stepResult;
+
+    s32 jumpingAnimation = MARIO_ANIM_FORWARD_SPINNING;
+    s32 fallingAnimation = MARIO_ANIM_GENERAL_FALL;
+    u32 landAction = ACT_TRIPLE_JUMP_LAND;
+
+    update_air_without_turn(m);
+
+    stepResult = perform_air_step(m, 0);
+    switch (stepResult) {
+        case AIR_STEP_NONE:
+            // When mario is falling from the triple jump and is close to approaching the floor (300 units),
+            // he should exit the spinning animation.
+            if (m->vel[1] < 0.0f && (m->pos[1] - m->floorHeight) <= 300.0f) {
+                set_mario_animation(m, fallingAnimation);
+            } else {
+                set_mario_animation(m, jumpingAnimation);
+            }
+            break;
+
+        case AIR_STEP_LANDED:
+            if (!check_fall_damage_or_get_stuck(m, ACT_HARD_BACKWARD_GROUND_KB)) {
+                set_mario_action(m, landAction, 0);
+            }
+            break;
+
+        case AIR_STEP_HIT_WALL:
+            set_mario_animation(m, jumpingAnimation);
+
+            if (m->forwardVel > 16.0f) {
+                queue_rumble_data(5, 40);
+                mario_bonk_reflection(m, FALSE);
+                m->faceAngle[1] += 0x8000;
+
+                if (m->wall != NULL) {
+                    set_mario_action(m, ACT_AIR_HIT_WALL, 0);
+                } else {
+                    if (m->vel[1] > 0.0f) {
+                        m->vel[1] = 0.0f;
+                    }
+
+                    //! Hands-free holding. Bonking while no wall is referenced
+                    // sets Mario's action to a non-holding action without
+                    // dropping the object, causing the hands-free holding
+                    // glitch. This can be achieved using an exposed ceiling,
+                    // out of bounds, grazing the bottom of a wall while
+                    // falling such that the final quarter step does not find a
+                    // wall collision, or by rising into the top of a wall such
+                    // that the final quarter step detects a ledge, but you are
+                    // not able to ledge grab it.
+                    if (m->forwardVel >= 38.0f) {
+                        m->particleFlags |= PARTICLE_VERTICAL_STAR;
+                        set_mario_action(m, ACT_BACKWARD_AIR_KB, 0);
+                    } else {
+                        if (m->forwardVel > 8.0f) {
+                            mario_set_forward_vel(m, -8.0f);
+                        }
+                        return set_mario_action(m, ACT_SOFT_BONK, 0);
+                    }
+                }
+            } else {
+                mario_set_forward_vel(m, 0.0f);
+            }
+            break;
+
+        case AIR_STEP_GRABBED_LEDGE:
+            set_mario_animation(m, MARIO_ANIM_IDLE_ON_LEDGE);
+            drop_and_set_mario_action(m, ACT_LEDGE_GRAB, 0);
+            break;
+
+        case AIR_STEP_GRABBED_CEILING:
+            set_mario_action(m, ACT_START_HANGING, 0);
+            break;
+
+        case AIR_STEP_HIT_LAVA_WALL:
+            lava_boost_on_wall(m);
+            break;
+    }
+
+    return stepResult;
+}
+
 s32 act_triple_jump(struct MarioState *m) {
     if (gSpecialTripleJump || (Cheats.EnableCheats == true && Cheats.SpecialTripleJump == true)) {
         return set_mario_action(m, ACT_SPECIAL_TRIPLE_JUMP, 0);
@@ -499,11 +588,20 @@ s32 act_triple_jump(struct MarioState *m) {
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_YAHOO);
 #endif
 
+#ifndef SPINNING_TRIPLE_JUMP
     common_air_action_step(m, ACT_TRIPLE_JUMP_LAND, MARIO_ANIM_TRIPLE_JUMP, 0);
     if (m->action == ACT_TRIPLE_JUMP_LAND) {
         queue_rumble_data(5, 40);
     }
     play_flip_sounds(m, 2, 8, 20);
+#else
+    spinning_triple_jump_air_action_step(m);
+    if (m->action == ACT_TRIPLE_JUMP_LAND) {
+        queue_rumble_data(5, 40);
+    }
+    play_spinning_triple_jump_sounds(m);
+#endif
+
     return FALSE;
 }
 
