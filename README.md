@@ -1,7 +1,7 @@
 # sm64ex
-My personal fork of [sm64-port/sm64ex](https://github.com/sm64-port/sm64ex) that I tinker with and add additional features to.
+My personal fork of [sm64pc/sm64ex](https://github.com/sm64pc/sm64ex) that I tinker with and add additional features to.
 
-All credit for the decompilation and ports to modern platforms go to the contributors of [sm64-port/sm64ex](https://github.com/sm64-port/sm64ex), [sm64-port/sm64-port](https://github.com/sm64-port/sm64-port) and [n64decomp/sm64](https://github.com/n64decomp/sm64). I have simply forked sm64ex to tinker with and learn.
+All credit for the decompilation and ports to modern platforms go to the contributors of [sm64pc/sm64ex](https://github.com/sm64pc/sm64ex), [sm64-port/sm64-port](https://github.com/sm64-port/sm64-port) and [n64decomp/sm64](https://github.com/n64decomp/sm64). I have simply forked sm64ex to tinker with and learn.
 
 ## Things I've added
 
