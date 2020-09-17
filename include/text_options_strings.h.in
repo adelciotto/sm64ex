@@ -8,6 +8,7 @@
 #define TEXT_OPT_OPTIONS   _("OPTIONS")
 #define TEXT_OPT_CAMERA    _("CAMERA")
 #define TEXT_OPT_CONTROLS  _("CONTROLS")
+#define TEXT_OPT_GAMEPLAY  _("GAMEPLAY")
 #define TEXT_OPT_VIDEO     _("DISPLAY")
 #define TEXT_OPT_AUDIO     _("SOUND")
 #define TEXT_OPT_CHEATS    _("CHEATS")
@@ -88,6 +89,9 @@
 #define TEXT_OPT_CHEAT10   _("INFINITE FALL HEIGHT")
 #define TEXT_OPT_CHEAT11   _("SPECIAL TRIPLE JUMP")
 
+#define TEXT_OPT_GAMEPLAY1 _("SPINNING TRIPLE JUMP")
+#define TEXT_OPT_GAMEPLAY2 _("DIVE HOP")
+
 #else // VERSION
 
 // Markers
@@ -153,6 +157,9 @@
 #define TEXT_OPT_CHEAT9    _("Tiny Mario")
 #define TEXT_OPT_CHEAT10   _("Infinite fall height")
 #define TEXT_OPT_CHEAT11   _("Special triple jump")
+
+#define TEXT_OPT_GAMEPLAY1 _("Spinning triple jump")
+#define TEXT_OPT_GAMEPLAY2 _("Dive hop")
 
 #endif // VERSION
 

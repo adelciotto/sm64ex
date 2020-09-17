@@ -19,6 +19,7 @@
 #include "pc/pc_main.h"
 #include "pc/cliopts.h"
 #include "pc/cheats.h"
+#include "pc/game_options.h"
 #include "pc/configfile.h"
 #include "pc/controller/controller_api.h"
 
@@ -60,6 +61,7 @@ static const u8 menuStr[][32] = {
     { TEXT_OPT_AUDIO },
     { TEXT_EXIT_GAME },
     { TEXT_OPT_CHEATS },
+    { TEXT_OPT_GAMEPLAY },
 };
 
 static const u8 optsCameraStr[][32] = {
@@ -73,6 +75,11 @@ static const u8 optsCameraStr[][32] = {
     { TEXT_OPT_MOUSE },
     { TEXT_OPT_CAMD },
     { TEXT_OPT_CAMON },
+};
+
+static const u8 optsGameplayStr[][32] = {
+    { TEXT_OPT_GAMEPLAY1 },
+    { TEXT_OPT_GAMEPLAY2 },
 };
 
 static const u8 optsVideoStr[][32] = {
@@ -258,6 +265,11 @@ static struct Option optsControls[] = {
     DEF_OPT_SCROLL( bindStr[17], &configRumbleStrength, 0, 100, 1)
 };
 
+static struct Option optsGameplay[] = {
+    DEF_OPT_TOGGLE( optsGameplayStr[0], &gameOptions.SpinningTripleJump),
+    DEF_OPT_TOGGLE( optsGameplayStr[1], &gameOptions.DiveHop),
+};
+
 static struct Option optsVideo[] = {
     DEF_OPT_TOGGLE( optsVideoStr[0], &configWindow.fullscreen ),
     DEF_OPT_TOGGLE( optsVideoStr[5], &configWindow.vsync ),
@@ -291,25 +303,27 @@ static struct Option optsCheats[] = {
 /* submenu definitions */
 
 #ifdef BETTERCAMERA
-static struct SubMenu menuCamera   = DEF_SUBMENU( menuStr[1], optsCamera );
+static struct SubMenu menuCamera   = DEF_SUBMENU( menuStr[4],  optsCamera );
 #endif
-static struct SubMenu menuControls = DEF_SUBMENU( menuStr[2], optsControls );
-static struct SubMenu menuVideo    = DEF_SUBMENU( menuStr[3], optsVideo );
-static struct SubMenu menuAudio    = DEF_SUBMENU( menuStr[4], optsAudio );
-static struct SubMenu menuCheats   = DEF_SUBMENU( menuStr[6], optsCheats );
+static struct SubMenu menuControls = DEF_SUBMENU( menuStr[5],  optsControls );
+static struct SubMenu menuGameplay = DEF_SUBMENU( menuStr[10], optsGameplay );
+static struct SubMenu menuVideo    = DEF_SUBMENU( menuStr[6],  optsVideo );
+static struct SubMenu menuAudio    = DEF_SUBMENU( menuStr[7],  optsAudio );
+static struct SubMenu menuCheats   = DEF_SUBMENU( menuStr[9],  optsCheats );
 
 /* main options menu definition */
 
 static struct Option optsMain[] = {
 #ifdef BETTERCAMERA
-    DEF_OPT_SUBMENU( menuStr[1], &menuCamera ),
+    DEF_OPT_SUBMENU( menuStr[4],  &menuCamera ),
 #endif
-    DEF_OPT_SUBMENU( menuStr[2], &menuControls ),
-    DEF_OPT_SUBMENU( menuStr[3], &menuVideo ),
-    DEF_OPT_SUBMENU( menuStr[4], &menuAudio ),
-    DEF_OPT_BUTTON ( menuStr[5], optmenu_act_exit ),
+    DEF_OPT_SUBMENU( menuStr[5],  &menuControls ),
+    DEF_OPT_SUBMENU( menuStr[10], &menuGameplay ),
+    DEF_OPT_SUBMENU( menuStr[6],  &menuVideo ),
+    DEF_OPT_SUBMENU( menuStr[7],  &menuAudio ),
+    DEF_OPT_BUTTON ( menuStr[8],  optmenu_act_exit ),
     // NOTE: always keep cheats the last option here because of the half-assed way I toggle them
-    DEF_OPT_SUBMENU( menuStr[6], &menuCheats )
+    DEF_OPT_SUBMENU( menuStr[9],  &menuCheats )
 };
 
 static struct SubMenu menuMain = DEF_SUBMENU( menuStr[0], optsMain );

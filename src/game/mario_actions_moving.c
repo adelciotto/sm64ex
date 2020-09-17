@@ -14,6 +14,7 @@
 #include "thread6.h"
 #include "pc/configfile.h"
 #include "pc/cheats.h"
+#include "pc/game_options.h"
 
 struct LandingAction {
     s16 numFrames;
@@ -1560,11 +1561,39 @@ s32 act_hold_stomach_slide(struct MarioState *m) {
     return cancel;
 }
 
+s32 dive_slide_rollout_action(struct MarioState *m) {
+    queue_rumble_data(5, 80);
+
+    u32 action = m->forwardVel > 0.0f ? ACT_FORWARD_ROLLOUT : ACT_BACKWARD_ROLLOUT;
+
+    return set_mario_action(m, action, 0);
+}
+
 s32 act_dive_slide(struct MarioState *m) {
-    if (!(m->input & INPUT_ABOVE_SLIDE) && (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED))) {
-        queue_rumble_data(5, 80);
-        return set_mario_action(m, m->forwardVel > 0.0f ? ACT_FORWARD_ROLLOUT : ACT_BACKWARD_ROLLOUT,
-                                0);
+    if (gameOptions.DiveHop == true) {
+        // When mario slows down enough during a dive slide, then he won't be able to dive again.
+        // So ensure A or B will roll him out of it.
+        if (m->forwardVel < 28.0f) {
+            if (!(m->input & INPUT_ABOVE_SLIDE) && (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED))) {
+                return dive_slide_rollout_action(m);
+            }
+        } 
+        
+        // Otherwise if mario is moving fast enough, then he can continue to dive.
+        else {
+            if (!(m->input & INPUT_ABOVE_SLIDE) && (m->input & (INPUT_A_PRESSED))) {
+                return dive_slide_rollout_action(m);
+            }
+
+            if (!(m->input & INPUT_ABOVE_SLIDE) && m->input & INPUT_B_PRESSED) {
+                m->vel[1] = 20.0f;
+                return set_mario_action(m, ACT_DIVE, 1);
+            }
+        }
+    } else {
+        if (!(m->input & INPUT_ABOVE_SLIDE) && (m->input & (INPUT_A_PRESSED | INPUT_B_PRESSED))) {
+            return dive_slide_rollout_action(m);
+        }
     }
 
     play_mario_landing_sound_once(m, SOUND_ACTION_TERRAIN_BODY_HIT_GROUND);

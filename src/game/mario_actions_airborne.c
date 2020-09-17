@@ -18,6 +18,7 @@
 #include "bettercamera.h"
 #endif
 #include "pc/cheats.h"
+#include "pc/game_options.h"
 
 void play_flip_sounds(struct MarioState *m, s16 frame1, s16 frame2, s16 frame3) {
     s32 animFrame = m->marioObj->header.gfx.unk38.animFrame;
@@ -588,19 +589,19 @@ s32 act_triple_jump(struct MarioState *m) {
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_YAHOO);
 #endif
 
-#ifndef SPINNING_TRIPLE_JUMP
-    common_air_action_step(m, ACT_TRIPLE_JUMP_LAND, MARIO_ANIM_TRIPLE_JUMP, 0);
-    if (m->action == ACT_TRIPLE_JUMP_LAND) {
-        queue_rumble_data(5, 40);
+    if (gameOptions.SpinningTripleJump == true) {
+        spinning_triple_jump_air_action_step(m);
+        if (m->action == ACT_TRIPLE_JUMP_LAND) {
+            queue_rumble_data(5, 40);
+        }
+        play_spinning_triple_jump_sounds(m);
+    } else {
+        common_air_action_step(m, ACT_TRIPLE_JUMP_LAND, MARIO_ANIM_TRIPLE_JUMP, 0);
+        if (m->action == ACT_TRIPLE_JUMP_LAND) {
+            queue_rumble_data(5, 40);
+        }
+        play_flip_sounds(m, 2, 8, 20);
     }
-    play_flip_sounds(m, 2, 8, 20);
-#else
-    spinning_triple_jump_air_action_step(m);
-    if (m->action == ACT_TRIPLE_JUMP_LAND) {
-        queue_rumble_data(5, 40);
-    }
-    play_spinning_triple_jump_sounds(m);
-#endif
 
     return FALSE;
 }
