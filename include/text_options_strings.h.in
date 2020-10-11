@@ -91,6 +91,7 @@
 
 #define TEXT_OPT_GAMEPLAY1 _("SPINNING TRIPLE JUMP")
 #define TEXT_OPT_GAMEPLAY2 _("DIVE HOP")
+#define TEXT_OPT_GAMEPLAY3 _("TWIRL JUMP")
 
 #else // VERSION
 
@@ -160,6 +161,7 @@
 
 #define TEXT_OPT_GAMEPLAY1 _("Spinning triple jump")
 #define TEXT_OPT_GAMEPLAY2 _("Dive hop")
+#define TEXT_OPT_GAMEPLAY3 _("Twirl jump")
 
 #endif // VERSION
 

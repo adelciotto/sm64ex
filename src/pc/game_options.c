@@ -2,5 +2,6 @@
 
 struct GameOptions gameOptions = {
     .SpinningTripleJump = false,
-    .DiveHop = false
+    .DiveHop = false,
+    .TwirlJump = false,
 };

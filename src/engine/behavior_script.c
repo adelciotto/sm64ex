@@ -71,6 +71,11 @@ f32 random_float(void) {
     return rnd / (double) 0x10000;
 }
 
+// Generata a pseudorandom u32 in the range [min, max].
+u32 random_u32_in_range(u32 min, u32 max) {
+    return (u32)(random_float() * max) + min;
+}
+
 // Return either -1 or 1 with a 50:50 chance.
 s32 random_sign(void) {
     if (random_u16() >= 0x7FFF) {

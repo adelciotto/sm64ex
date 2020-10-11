@@ -6,6 +6,7 @@
 struct GameOptions {
     bool SpinningTripleJump;
     bool DiveHop;
+    bool TwirlJump;
 };
 
 extern struct GameOptions gameOptions;

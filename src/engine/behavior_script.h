@@ -21,6 +21,7 @@
 
 u16 random_u16(void);
 float random_float(void);
+u32 random_u32_in_range(u32 min, u32 max);
 s32 random_sign(void);
 
 void stub_behavior_script_2(void);

@@ -892,6 +892,11 @@ static u32 set_mario_action_airborne(struct MarioState *m, u32 action, u32 actio
         case ACT_JUMP_KICK:
             m->vel[1] = 20.0f;
             break;
+
+        case ACT_JUMP_TWIRL:
+            m->vel[1] = 42.0f;
+            m->forwardVel = 6.0f;
+            break;
     }
 
     m->peakHeight = m->pos[1];
@@ -1919,6 +1924,8 @@ void init_mario(void) {
 
         capObject->oMoveAngleYaw = 0;
     }
+
+    gMarioState->twirlGravityModifier = 0.0f;
 }
 
 void init_mario_from_save_file(void) {

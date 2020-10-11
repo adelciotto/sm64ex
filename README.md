@@ -11,6 +11,7 @@ All credit for the decompilation and ports to modern platforms go to the contrib
 * Added a new gameplay sub menu to options screen.
 * Added new mario sunshine style spinning triple jump which can be enabled in the new gameplay options sub menu.
 * Added new mario sunshine style dive which can be enabled in the new gameplay options sub menu.
+* Added new mario galaxy style spin jump which can be enabled in the new gameplay options sub menu.
 
 This repository contains **no upload of any copyrighted asset**.
 Run `./extract_assets.py --clean && make clean` or `make distclean` to remove ROM-originated content.

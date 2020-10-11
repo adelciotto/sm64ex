@@ -145,6 +145,7 @@ static const struct ConfigOption options[] = {
     #endif 
     {.name = "gameoptions_spinning_triple_jump", .type = CONFIG_TYPE_BOOL, .boolValue = &gameOptions.SpinningTripleJump},
     {.name = "gameoptions_dive_hop",             .type = CONFIG_TYPE_BOOL, .boolValue = &gameOptions.DiveHop},
+    {.name = "gameoptions_twirl_jump",           .type = CONFIG_TYPE_BOOL, .boolValue = &gameOptions.TwirlJump},
     {.name = "cheats_enable",                    .type = CONFIG_TYPE_BOOL, .boolValue = &Cheats.EnableCheats},
     {.name = "cheats_moonjump",                  .type = CONFIG_TYPE_BOOL, .boolValue = &Cheats.MoonJump},
     {.name = "cheats_godmode",                   .type = CONFIG_TYPE_BOOL, .boolValue = &Cheats.GodMode},
