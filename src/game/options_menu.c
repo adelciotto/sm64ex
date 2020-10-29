@@ -81,6 +81,7 @@ static const u8 optsGameplayStr[][32] = {
     { TEXT_OPT_GAMEPLAY1 },
     { TEXT_OPT_GAMEPLAY2 },
     { TEXT_OPT_GAMEPLAY3 },
+    { TEXT_OPT_GAMEPLAY4 },
 };
 
 static const u8 optsVideoStr[][32] = {
@@ -269,7 +270,8 @@ static struct Option optsControls[] = {
 static struct Option optsGameplay[] = {
     DEF_OPT_TOGGLE( optsGameplayStr[0], &gameOptions.SpinningTripleJump),
     DEF_OPT_TOGGLE( optsGameplayStr[1], &gameOptions.DiveHop),
-    DEF_OPT_TOGGLE( optsGameplayStr[2], &gameOptions.TwirlJump),
+    DEF_OPT_TOGGLE( optsGameplayStr[2], &gameOptions.TwirlAttack),
+    DEF_OPT_TOGGLE( optsGameplayStr[3], &gameOptions.NewMoveset),
 };
 
 static struct Option optsVideo[] = {

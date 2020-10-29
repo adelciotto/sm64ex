@@ -91,7 +91,8 @@
 
 #define TEXT_OPT_GAMEPLAY1 _("SPINNING TRIPLE JUMP")
 #define TEXT_OPT_GAMEPLAY2 _("DIVE HOP")
-#define TEXT_OPT_GAMEPLAY3 _("TWIRL JUMP")
+#define TEXT_OPT_GAMEPLAY3 _("TWIRL ATTACK")
+#define TEXT_OPT_GAMEPLAY4 _("NEW MOVESET")
 
 #else // VERSION
 
@@ -161,7 +162,8 @@
 
 #define TEXT_OPT_GAMEPLAY1 _("Spinning triple jump")
 #define TEXT_OPT_GAMEPLAY2 _("Dive hop")
-#define TEXT_OPT_GAMEPLAY3 _("Twirl jump")
+#define TEXT_OPT_GAMEPLAY3 _("Twirl attack")
+#define TEXT_OPT_GAMEPLAY4 _("New moveset")
 
 #endif // VERSION
 

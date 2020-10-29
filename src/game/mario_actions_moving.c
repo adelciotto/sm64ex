@@ -493,13 +493,18 @@ s32 analog_stick_held_back(struct MarioState *m) {
     return intendedDYaw < -0x471C || intendedDYaw > 0x471C;
 }
 
+bool dive_hop_enabled(void) {
+    return gameOptions.NewMoveset || gameOptions.DiveHop;
+}
+
 s32 check_ground_dive_or_punch(struct MarioState *m) {
     UNUSED s32 unused;
 
     if (m->input & INPUT_B_PRESSED) {
         //! Speed kick (shoutouts to SimpleFlips)
-        f32 diveForwardVel = gameOptions.DiveHop == true ? 19.0f : 29.0f;
-        if (m->forwardVel >= diveForwardVel && m->controller->stickMag > 48.0f) {
+        f32 diveForwardVel = dive_hop_enabled() ? 12.0f : 29.0f;
+        f32 diveForwardStickMag = dive_hop_enabled() ? 40.0f : 48.0f;
+        if (m->forwardVel >= diveForwardVel && m->controller->stickMag > diveForwardStickMag) {
             m->vel[1] = 20.0f;
             return set_mario_action(m, ACT_DIVE, 1);
         }
@@ -805,6 +810,10 @@ s32 act_walking(struct MarioState *m) {
     }
 
     if (m->input & INPUT_A_PRESSED) {
+        if (m->input & INPUT_ANALOG_SPIN) {
+            return set_jumping_action(m, ACT_SPIN_JUMP, 0);
+        }
+
         return set_jump_from_landing(m);
     }
 
@@ -981,6 +990,10 @@ s32 act_turning_around(struct MarioState *m) {
     }
 
     if (m->input & INPUT_A_PRESSED) {
+        if (m->input & INPUT_ANALOG_SPIN) {
+            return set_jumping_action(m, ACT_SPIN_JUMP, 0);
+        }
+
         return set_jumping_action(m, ACT_SIDE_FLIP, 0);
     }
 
@@ -1032,6 +1045,10 @@ s32 act_finish_turning_around(struct MarioState *m) {
     }
 
     if (m->input & INPUT_A_PRESSED) {
+        if (m->input & INPUT_ANALOG_SPIN) {
+            return set_jumping_action(m, ACT_SPIN_JUMP, 0);
+        }
+
         return set_jumping_action(m, ACT_SIDE_FLIP, 0);
     }
 
@@ -1571,7 +1588,7 @@ s32 dive_slide_rollout_action(struct MarioState *m) {
 }
 
 s32 act_dive_slide(struct MarioState *m) {
-    if (gameOptions.DiveHop == true) {
+    if (dive_hop_enabled()) {
         // When mario slows down enough during a dive slide, then he won't be able to dive again.
         // So ensure A or B will roll him out of it.
         if (m->forwardVel < 28.0f) {

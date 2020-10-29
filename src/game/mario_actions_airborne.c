@@ -113,10 +113,14 @@ s32 check_fall_damage(struct MarioState *m, u32 hardFallAction) {
     return FALSE;
 }
 
+bool twirl_attack_enabled(void) {
+    return gameOptions.NewMoveset || gameOptions.TwirlAttack;
+}
+
 s32 check_kick_or_dive_in_air(struct MarioState *m) {
     if (m->input & INPUT_B_PRESSED) {
-        if (gameOptions.TwirlJump == true) {
-            return set_mario_action(m, ACT_JUMP_TWIRL, 0);
+        if (twirl_attack_enabled()) {
+            return set_mario_action(m, ACT_TWIRL_ATTACK, 0);
         }
 
         return set_mario_action(m, m->forwardVel > 28.0f ? ACT_DIVE : ACT_JUMP_KICK, 0);
@@ -126,7 +130,7 @@ s32 check_kick_or_dive_in_air(struct MarioState *m) {
 
 s32 check_dive_in_air(struct MarioState *m) {
     if (m->input & INPUT_B_PRESSED) {
-        u32 action = gameOptions.TwirlJump == true ? ACT_JUMP_TWIRL : ACT_DIVE;
+        u32 action = twirl_attack_enabled() ? ACT_TWIRL_ATTACK : ACT_DIVE;
         return set_mario_action(m, action, 0);
     }
     return FALSE;
@@ -588,8 +592,8 @@ s32 act_triple_jump(struct MarioState *m) {
         return set_mario_action(m, ACT_SPECIAL_TRIPLE_JUMP, 0);
     }
 
-    if (m->input & INPUT_B_PRESSED) {
-        return set_mario_action(m, ACT_DIVE, 0);
+    if (check_dive_in_air(m)) {
+        return TRUE;
     }
 
     if (m->input & INPUT_Z_PRESSED) {
@@ -602,7 +606,7 @@ s32 act_triple_jump(struct MarioState *m) {
     play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP, SOUND_MARIO_YAHOO);
 #endif
 
-    if (gameOptions.SpinningTripleJump == true) {
+    if (gameOptions.NewMoveset || gameOptions.SpinningTripleJump) {
         spinning_triple_jump_air_action_step(m);
         if (m->action == ACT_TRIPLE_JUMP_LAND) {
             queue_rumble_data(5, 40);
@@ -631,6 +635,48 @@ s32 act_backflip(struct MarioState *m) {
         queue_rumble_data(5, 40);
     }
     play_flip_sounds(m, 2, 3, 17);
+    return FALSE;
+}
+
+s32 act_spin_jump(struct MarioState *m) {
+    if (m->input & INPUT_B_PRESSED) {
+        return set_mario_action(m, ACT_DIVE, 0);
+    }
+
+    if (m->input & INPUT_Z_PRESSED) {
+        return set_mario_action(m, ACT_GROUND_POUND, 0);
+    }
+
+    s16 startTwirlYaw = m->twirlYaw;
+    s16 yawVelTarget = 0x2000;
+    s32 twirlAnim = m->actionArg == 0 ? MARIO_ANIM_START_TWIRL : MARIO_ANIM_TWIRL;
+
+    if (is_anim_past_end(m)) {
+        m->actionArg = 1;
+    }
+
+    if (m->actionState == 0) {
+        play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP,
+                         SOUND_MARIO_YAHOO_WAHA_YIPPEE + ((gAudioRandom % 5) << 16));
+
+        m->marioObj->header.gfx.unk38.animID = -1;
+        m->faceAngle[1] = m->intendedYaw;
+        m->gravityHeaviness = 0.0f;
+        m->spinDir = m->spinState < 0 ? -1 : 1;
+        m->actionState = 1;
+    }
+
+    m->twirlYaw += yawVelTarget;
+
+    if (startTwirlYaw > m->twirlYaw) {
+        play_sound(SOUND_ACTION_TWIRL, m->marioObj->header.gfx.cameraToObject);
+    }
+
+    common_air_action_step(m, ACT_DOUBLE_JUMP_LAND, twirlAnim,
+                           AIR_STEP_CHECK_LEDGE_GRAB | AIR_STEP_CHECK_HANG);
+
+    m->marioObj->header.gfx.angle[1] += m->twirlYaw * m->spinDir;
+
     return FALSE;
 }
 
@@ -1760,48 +1806,40 @@ s32 act_jump_kick(struct MarioState *m) {
     return FALSE;
 }
 
-s32 act_jump_twirl(struct MarioState *m) {
+s32 act_twirl_attack(struct MarioState *m) {
     if (m->input & INPUT_Z_PRESSED) {
         return set_mario_action(m, ACT_GROUND_POUND, 0);
     }
 
     s16 startTwirlYaw = m->twirlYaw;
     s16 yawVelTarget = 0x1800;
-
-    m->twirlYaw += yawVelTarget;
-
     s32 twirlAnim = m->actionArg == 0 ? MARIO_ANIM_START_TWIRL : MARIO_ANIM_TWIRL;
-
-    if (startTwirlYaw > m->twirlYaw) {
-        play_sound(SOUND_ACTION_TWIRL, m->marioObj->header.gfx.cameraToObject);
-    }
-
-    if (m->actionState == 0) {
-        const u32 sounds[] = {
-            SOUND_MARIO_PUNCH_WAH,
-            SOUND_MARIO_PUNCH_YAH,
-            SOUND_MARIO_YAHOO,
-            SOUND_MARIO_WAH2,
-            SOUND_MARIO_HAHA,
-            SOUND_MARIO_HAHA_2,
-        };
-        u32 soundToPlay = sounds[random_u32_in_range(0, (u32)(sizeof(sounds) / sizeof(sounds[0])) - 1)];
-        play_sound_if_no_flag(m, soundToPlay, MARIO_ACTION_SOUND_PLAYED);
-
-        m->marioObj->header.gfx.unk38.animID = -1;
-        m->twirlGravityModifier = 0.0f;
-        m->actionState = 1;
-    }
-
-    common_air_action_step(m, ACT_FREEFALL_LAND, twirlAnim, AIR_STEP_CHECK_LEDGE_GRAB);
 
     if (is_anim_past_end(m)) {
         m->actionArg = 1;
     }
 
+    if (m->actionState == 0) {
+        play_mario_sound(m, SOUND_ACTION_TERRAIN_JUMP,
+                         SOUND_MARIO_YAH_WAH_HOO + ((gAudioRandom % 3) << 16));
+
+        m->marioObj->header.gfx.unk38.animID = -1;
+        m->gravityHeaviness = 0.0f;
+        m->actionState = 1;
+    }
+
+    m->twirlYaw += yawVelTarget;
+
+    if (startTwirlYaw > m->twirlYaw) {
+        play_sound(SOUND_ACTION_TWIRL, m->marioObj->header.gfx.cameraToObject);
+    }
+
+    common_air_action_step(m, ACT_FREEFALL_LAND, twirlAnim,
+                           AIR_STEP_CHECK_LEDGE_GRAB | AIR_STEP_CHECK_HANG);
+
     m->flags |= MARIO_TWIRLING;
-    m->marioObj->header.gfx.angle[1] += m->twirlYaw;
     m->particleFlags |= PARTICLE_SPARKLES;
+    m->marioObj->header.gfx.angle[1] += m->twirlYaw;
 
     return FALSE;
 }
@@ -2308,6 +2346,7 @@ s32 mario_execute_airborne_action(struct MarioState *m) {
         case ACT_BURNING_FALL:         cancel = act_burning_fall(m);         break;
         case ACT_TRIPLE_JUMP:          cancel = act_triple_jump(m);          break;
         case ACT_BACKFLIP:             cancel = act_backflip(m);             break;
+        case ACT_SPIN_JUMP:            cancel = act_spin_jump(m);            break;
         case ACT_LONG_JUMP:            cancel = act_long_jump(m);            break;
         case ACT_RIDING_SHELL_JUMP:
         case ACT_RIDING_SHELL_FALL:    cancel = act_riding_shell_air(m);     break;
@@ -2334,7 +2373,7 @@ s32 mario_execute_airborne_action(struct MarioState *m) {
         case ACT_FLYING_TRIPLE_JUMP:   cancel = act_flying_triple_jump(m);   break;
         case ACT_SLIDE_KICK:           cancel = act_slide_kick(m);           break;
         case ACT_JUMP_KICK:            cancel = act_jump_kick(m);            break;
-        case ACT_JUMP_TWIRL:           cancel = act_jump_twirl(m);           break;
+        case ACT_TWIRL_ATTACK:         cancel = act_twirl_attack(m);         break;
         case ACT_FLYING:               cancel = act_flying(m);               break;
         case ACT_RIDING_HOOT:          cancel = act_riding_hoot(m);          break;
         case ACT_TOP_OF_POLE_JUMP:     cancel = act_top_of_pole_jump(m);     break;

@@ -184,7 +184,7 @@ u32 determine_interaction(struct MarioState *m, struct Object *o) {
     u32 action = m->action;
 
     if (action & ACT_FLAG_ATTACKING) {
-        if (action == ACT_PUNCHING || action == ACT_MOVE_PUNCHING || action == ACT_JUMP_KICK || action == ACT_JUMP_TWIRL) {
+        if (action == ACT_PUNCHING || action == ACT_MOVE_PUNCHING || action == ACT_JUMP_KICK || action == ACT_TWIRL_ATTACK) {
             s16 dYawToObject = mario_obj_angle_to_object(m, o) - m->faceAngle[1];
 
             if (m->flags & MARIO_PUNCHING) {
@@ -660,7 +660,7 @@ void bounce_back_from_attack(struct MarioState *m, u32 interaction) {
             m->action = ACT_MOVE_PUNCHING;
         }
 
-        if (m->action == ACT_JUMP_TWIRL) {
+        if (m->action == ACT_TWIRL_ATTACK) {
             mario_set_forward_vel(m, -8.0f);
         } else {
             if (m->action & ACT_FLAG_AIR) {
@@ -1487,7 +1487,7 @@ u32 check_object_grab_mario(struct MarioState *m, UNUSED u32 interactType, struc
 
 u32 interact_pole(struct MarioState *m, UNUSED u32 interactType, struct Object *o) {
     s32 actionId = m->action & ACT_ID_MASK;
-    if ((actionId >= 0x080 && actionId < 0x0A0) || m->action == ACT_JUMP_TWIRL) {
+    if ((actionId >= 0x080 && actionId < 0x0A0) || m->action == ACT_TWIRL_ATTACK) {
         if (!(m->prevAction & ACT_FLAG_ON_POLE) || m->usedObj != o) {
 #ifdef VERSION_SH
             f32 velConv = m->forwardVel; // conserve the velocity.

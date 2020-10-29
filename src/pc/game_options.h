@@ -6,7 +6,8 @@
 struct GameOptions {
     bool SpinningTripleJump;
     bool DiveHop;
-    bool TwirlJump;
+    bool TwirlAttack;
+    bool NewMoveset;
 };
 
 extern struct GameOptions gameOptions;
